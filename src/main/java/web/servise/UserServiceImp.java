@@ -1,42 +1,43 @@
-package hiber.service;
+package web.servise;
 
-import hiber.dao.UserDao;
-import hiber.model.Car;
-import hiber.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import web.dao.UserDao;
+import web.dao.UserDaoImp;
+import web.model.*;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
 @Transactional
 public class UserServiceImp implements UserService {
 
-   @Autowired
-   private UserDao userDao;
+    @Autowired
+    UserDao userDao = new UserDaoImp();
 
-   @Transactional
-   @Override
-   public void add(User user) {
-      userDao.add(user);
-   }
+    @Override
+    public void add(User user) {
+        userDao.add(user);
+    }
 
-   @Override
-   public void remove(Long id) {
-      userDao.remove(id);
-   }
+    @Override
+    public List<User> listOfUsers() {
+        return userDao.listOfUsers();
+    }
 
-   @Override
-   public User getUser(String car_model, Integer car_series) {
-      return userDao.getUser(car_model, car_series);
-   }
+    @Override
+    public void remove(Integer id) {
+        userDao.remove(id);
+    }
 
+    @Override
+    public void edit(User user) {
+        userDao.edit(user);
+    }
 
-   @Transactional(readOnly = true)
-   @Override
-   public List<User> listUsers() {
-      return userDao.listUsers();
-   }
-
+    @Override
+    public User getUserById(Integer id) {
+        return userDao.getUserById(id);
+    }
 }

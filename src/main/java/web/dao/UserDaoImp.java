@@ -1,52 +1,58 @@
-package hiber.dao;
+package web.dao;
 
-import hiber.model.Car;
-import hiber.model.User;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import web.model.User;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
+
 @Repository
+@Transactional
 public class UserDaoImp implements UserDao {
 
-    @Autowired
-    private SessionFactory sessionFactory;
+    @PersistenceContext
+    EntityManager entityManager;
 
+    @Transactional
     @Override
     public void add(User user) {
-        sessionFactory.getCurrentSession().save(user);
+        entityManager.persist(user);
     }
 
+    @Transactional
     @Override
-    public void remove(Long id) {
-        Session session = sessionFactory.getCurrentSession();
-        User user = session.load(User.class, id);
-        session.delete(user);
+    public void remove(Integer id) {
+        User user = (User) entityManager.createQuery("select u from User u where u.id = :id")
+                .setParameter("id", id).getSingleResult();
+        entityManager.remove(user);
     }
 
+    @Transactional
     @Override
-    public User getUser(String car_model, Integer car_series ) {
-        Session session = sessionFactory.getCurrentSession();
-        Query query = session.createQuery("from User u where u.car.model =:model and u.car.series =:series");
-        query.setParameter("model", car_model);
-        query.setParameter("series", car_series);
-        if (query.getResultList().size() > 1) {
-            System.out.println("There are more then one user...getting first one out of the list");
-        }
-        return (User) query.getResultList().get(0);
+    public void edit(User user) {
+        User userToEdit = (User) entityManager.createQuery("select u from User u where u.id = :id")
+                .setParameter("id", user.getId()).getSingleResult();
+        userToEdit.setName(user.getName());
+        userToEdit.setMiddle_name(user.getMiddle_name());
+        userToEdit.setSurname(user.getSurname());
+        userToEdit.setAge(user.getAge());
+        entityManager.persist(userToEdit);
     }
 
+    @Transactional(readOnly = true)
     @Override
-    @SuppressWarnings("unchecked")
-    public List<User> listUsers() {
-        TypedQuery<User> query = sessionFactory.getCurrentSession().createQuery("from User");
-        return query.getResultList();
+    public User getUserById(Integer id) {
+        return (User) entityManager.createQuery("select u from User u where u.id = :id")
+                .setParameter("id", id).getSingleResult();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<User> listOfUsers() {
+        List<User> list = (List<User>) entityManager.createQuery("select u from User u order by u.id").getResultList();
+        return list;
     }
 
 }

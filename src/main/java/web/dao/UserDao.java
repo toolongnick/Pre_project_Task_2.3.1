@@ -1,14 +1,14 @@
-package hiber.dao;
+package web.dao;
 
-import hiber.model.Car;
-import hiber.model.User;
+import web.model.*;
 
 import java.util.List;
 
 public interface UserDao {
-   void add(User user);
-   List<User> listUsers();
-   void remove (Long id);
-   User getUser(String car_model, Integer car_series);
+    void add(User user);
+    List<User> listOfUsers();
+    void remove(Integer id);
+    void edit (User user);
+    User getUserById(Integer id);
 
 }

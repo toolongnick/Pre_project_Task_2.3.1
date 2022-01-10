@@ -1,0 +1,12 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="'Welcome page'" />
+</head>
+<body>
+<h1 th:utext="${welcome}" />
+<a th:href="@{/users}">User List</a>
+<br/><br/>
+</body>
+</html>
