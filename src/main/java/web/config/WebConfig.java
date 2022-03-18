@@ -12,7 +12,7 @@ import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 @Configuration
 @EnableWebMvc
 @ComponentScan("web")
-@PropertySource(value= {"classpath:application_en.properties" })
+@PropertySource(value= {"classpath:db.properties" })
 public class WebConfig implements WebMvcConfigurer {
 
     private final ApplicationContext applicationContext;

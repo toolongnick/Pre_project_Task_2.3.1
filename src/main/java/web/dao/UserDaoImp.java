@@ -13,7 +13,7 @@ import java.util.List;
 public class UserDaoImp implements UserDao {
 
     @PersistenceContext
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Transactional
     @Override
@@ -24,7 +24,7 @@ public class UserDaoImp implements UserDao {
     @Transactional
     @Override
     public void remove(Integer id) {
-        User user = (User) entityManager.createQuery("select u from User u where u.id = :id")
+        User user = entityManager.createQuery("select u from User u where u.id = :id", User.class)
                 .setParameter("id", id).getSingleResult();
         entityManager.remove(user);
     }
@@ -32,27 +32,20 @@ public class UserDaoImp implements UserDao {
     @Transactional
     @Override
     public void edit(User user) {
-        User userToEdit = (User) entityManager.createQuery("select u from User u where u.id = :id")
-                .setParameter("id", user.getId()).getSingleResult();
-        userToEdit.setName(user.getName());
-        userToEdit.setMiddle_name(user.getMiddle_name());
-        userToEdit.setSurname(user.getSurname());
-        userToEdit.setAge(user.getAge());
-        entityManager.persist(userToEdit);
+        entityManager.merge(user);
     }
 
     @Transactional(readOnly = true)
     @Override
     public User getUserById(Integer id) {
-        return (User) entityManager.createQuery("select u from User u where u.id = :id")
+        return entityManager.createQuery("select u from User u where u.id = :id", User.class)
                 .setParameter("id", id).getSingleResult();
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<User> listOfUsers() {
-        List<User> list = (List<User>) entityManager.createQuery("select u from User u order by u.id").getResultList();
-        return list;
+        return entityManager.createQuery("select u from User u order by u.id", User.class).getResultList();
     }
 
 }

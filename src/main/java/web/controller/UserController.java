@@ -6,17 +6,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import web.model.User;
-import web.servise.UserServiceImp;
+import web.servise.UserService;
 
 import java.util.List;
 
 @Controller
 public class UserController {
+
     @Value("${msg.title}")
     private String welcome;
 
     @Autowired
-    private UserServiceImp userServiceImp;
+    private UserService userService;
 
     @GetMapping(value = "/")
     public ModelAndView welcomePage (ModelAndView model) {
@@ -27,7 +28,7 @@ public class UserController {
 
     @GetMapping(value = "/users")
     public ModelAndView listOfUsers(ModelAndView model) {
-        List<User> list = userServiceImp.listOfUsers();
+        List<User> list = userService.listOfUsers();
         model.setViewName("user-list");
         model.addObject("ListOfUsers", list);
         return model;
@@ -42,13 +43,13 @@ public class UserController {
 
     @PostMapping(value = "/user-create")
     public String createUser(@ModelAttribute User user) {
-        userServiceImp.add(user);
+        userService.add(user);
         return "redirect:/users";
     }
 
     @GetMapping(value = "/user-edit/{id}")
     public ModelAndView editPage (@PathVariable ("id") Integer id, ModelAndView modelAndView) {
-        User user = userServiceImp.getUserById(id);
+        User user = userService.getUserById(id);
         modelAndView.setViewName("user-edit");
         modelAndView.addObject("user", user);
         return modelAndView;
@@ -58,14 +59,14 @@ public class UserController {
     public ModelAndView editFilm(@ModelAttribute User user, @PathVariable("id") Integer id, ModelAndView modelAndView) {
         user.setId(id);
         modelAndView.setViewName("redirect:/users");
-        userServiceImp.edit(user);
+        userService.edit(user);
         return modelAndView;
     }
 
     @GetMapping(value = "/user-delete/{id}")
     public ModelAndView deleteUser(@PathVariable ("id") Integer id, ModelAndView modelAndView){
         modelAndView.setViewName("redirect:/users");
-        userServiceImp.remove(id);
+        userService.remove(id);
         return modelAndView;
     }
 
